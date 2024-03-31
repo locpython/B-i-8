@@ -156,6 +156,7 @@ def main():
 
     if choice == "Huấn luyện model":
         st.header("Huấn luyện mô hình nhận dạng ký tự")
+        st.write('Khoảng 500 hình / chữ cái')
         epochs = st.number_input('Chọn số epochs:', min_value=1, max_value=100, value=10)
         test_size = st.slider('Tỉ lệ dữ liệu kiểm tra:', min_value=0.1, max_value=0.9, value=0.2)
                                                          
