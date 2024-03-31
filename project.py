@@ -13,6 +13,7 @@ from PIL import Image
 from tensorflow.keras.models import load_model
 import bz2
 import time
+
 # Hàm để tải và xử lý dữ liệu
 def load_and_preprocess_data():
     with bz2.open('dataset_X.pkl.bz2', 'rb') as file:
@@ -113,9 +114,9 @@ def draw_test_confident(model):
     if col2.button('Predict Image') and uploaded_file is not None:
     # Open and convert the uploaded image to numpy array
         image = Image.open(uploaded_file)
+        image_2 = Image.open(uploaded_file).copy()
+        
         image_array = np.array(image)
-        image_array_2 = np.array(image).copy()
-    # Predict the uploaded image
         prediction = predict_img(image_array, model)
 
         # Display prediction results
@@ -127,13 +128,11 @@ def draw_test_confident(model):
         image_display = Image.fromarray(resized_image)
         col1.image(image_display, caption='Uploaded Image')
 
-        if image_array_2 is not None and len(image_array_2.shape) == 3 and image_array_2.shape[2] != 3:
-            img_gray = cv2.cvtColor(image_array_2, cv2.COLOR_RGB2GRAY)
-        else:
-            img_gray = img_gray.shape
+
+# Hình 2
+        img_gray = np.array(image_2.convert('L'))
         img_gray_resized = cv2.resize(img_gray, (200, 200), interpolation=cv2.INTER_LANCZOS4)
         img_gray_display = Image.fromarray(img_gray_resized, 'L')  # Specify mode as 'L' (grayscale)
-        st.write(img_gray_display.size)
         col1.image(img_gray_display, caption='Gray Image')
 
         # Predict using the grayscale image converted back to three channels
@@ -143,7 +142,6 @@ def draw_test_confident(model):
         for _ in range(8):
             col2.write("")
 
-        # Display the prediction results
         for line in prediction_2:
             col2.write(line)
 # Hàm chính để chạy ứng dụng
@@ -177,6 +175,9 @@ def main():
             st.write(f"Thời gian huấn luyện mô hình: {st.session_state.training_time:.2f} giây.") 
             display_training_history(st.session_state.history)
             draw_test_confident(st.session_state.model)
+            st.success('Thành Công', icon="✅")
+            st.snow()
+            st.balloons()
     elif choice == "Dataset":
         st.header("Hiển thị mẫu từ Dataset")
         show_dataset_examples(st.session_state.X, st.session_state.y)
@@ -185,28 +186,22 @@ def main():
     elif choice == "Thử nghiệm model":
         st.header("Thử nghiệm model")
         st.write("Đây là model mình làm với lượng dataset lớn khoảng 130000 hình cùng với 20 epochs và áp dụng 1 số kĩ thuật huấn luyện mô hình do  mình tham khảo")
-        # Load the model once per session
+
         if 'loaded_model' not in st.session_state:
             st.session_state.loaded_model = load_model('model.keras')
         
         model = st.session_state.loaded_model
         label_encoder = LabelEncoder()
-        # Ensure the data has already been loaded and is available in the session state
         if 'X' in st.session_state and 'y' in st.session_state:
             X, y = st.session_state.X, to_categorical(label_encoder.fit_transform(st.session_state.y))
-            # Assuming y is already encoded when loaded; otherwise, you need to encode it.
-            
-            # Normally, you'd split the data earlier and save both train and test sets in the session state.
-            # If you're evaluating on a new set, prepare it accordingly.
-            # For demonstration, we use the whole dataset, but you should replace this with a proper test set.
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
-            
-            # Evaluating the model (assuming it's already compiled and ready)
             eval_result = model.evaluate(X_test, y_test)
             st.write(f"Độ chính xác trên tập kiểm tra: {eval_result[1] * 100:.2f}% (độ chính xác cao hơn khoảng 20%)")
             st.write(f"=> ta nhận thấy rằng việc epochs gấp đôi cùng với data khoảng 135000 hình so với epochs 10 và khoảng 13000 hình có sự phân biệt lớn")
-            # Draw and predict using the loaded model
             draw_test_confident(model)
+            st.success('Thành công', icon="✅")
+            st.snow()
+            st.balloons()
 
 
        
