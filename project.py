@@ -203,9 +203,6 @@ def main():
             st.write(f"Độ chính xác trên tập kiểm tra: {eval_result[1] * 100:.2f}% (độ chính xác cao hơn khoảng 20%)")
             st.write(f"=> ta nhận thấy rằng việc epochs gấp đôi cùng với data khoảng 135000 hình so với epochs 10 và khoảng 13000 hình có sự phân biệt lớn")
             draw_test_confident(model)
-            st.success('Thành công', icon="✅")
-            st.snow()
-            st.balloons()
 
 
        
