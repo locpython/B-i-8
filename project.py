@@ -110,6 +110,9 @@ def draw_test_confident(model):
             prediction = predict_img(canvas_result.image_data.astype(np.uint8),model)
             for line in prediction:
                 st.write(line)
+        st.success('Thành Công', icon="✅")
+        st.snow()
+        st.balloons()
                 
     if col2.button('Predict Image') and uploaded_file is not None:
     # Open and convert the uploaded image to numpy array
@@ -137,6 +140,9 @@ def draw_test_confident(model):
 
         # Predict using the grayscale image converted back to three channels
         prediction_2 = predict_img(img_gray_display, model)
+        st.success('Thành Công', icon="✅")
+        st.snow()
+        st.balloons()
         
         # Add empty lines
         for _ in range(8):
@@ -176,9 +182,6 @@ def main():
             st.write(f"Thời gian huấn luyện mô hình: {st.session_state.training_time:.2f} giây.") 
             display_training_history(st.session_state.history)
             draw_test_confident(st.session_state.model)
-            st.success('Thành Công', icon="✅")
-            st.snow()
-            st.balloons()
     elif choice == "Dataset":
         st.header("Hiển thị mẫu từ Dataset")
         show_dataset_examples(st.session_state.X, st.session_state.y)
